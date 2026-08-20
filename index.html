@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="es" class="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Poshi Inventory Checker | Pokémon TCG</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="icon" href="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/700.png" type="image/png">
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              400: '#f472b6',
+              500: '#ec4899',
+              600: '#db2777',
+            }
+          }
+        }
+      }
+    }
+  </script>
+</head>
+<body class="bg-slate-950 text-slate-100 min-h-screen font-sans selection:bg-pink-500 selection:text-white">
+
+  <!-- Header / Navbar -->
+  <header class="sticky top-0 z-30 bg-slate-900/80 backdrop-blur-md border-b border-slate-800 px-4 lg:px-8 py-4">
+    <div class="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
+      
+      <!-- Brand Logo -->
+      <div class="flex items-center gap-3">
+        <img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/700.png" 
+             alt="Sylveon Logo" 
+             class="w-12 h-12 object-contain filter drop-shadow-[0_0_8px_rgba(244,114,182,0.6)]">
+        <div>
+          <h1 class="text-xl font-extrabold text-pink-400 tracking-wide flex items-center gap-2">
+            Poshi Inventory <span class="text-xs bg-pink-500/20 text-pink-300 border border-pink-500/30 px-2 py-0.5 rounded-full font-mono">TCG</span>
+          </h1>
+          <p class="text-xs text-slate-400">Catálogo oficial de cartas</p>
+        </div>
+      </div>
+
+      <!-- Control de Rol & Métricas -->
+      <div class="flex items-center gap-4">
+        <div class="flex items-center gap-1.5 text-[11px] text-slate-500" title="Estado de sincronización con el servidor">
+          <span id="syncStatusDot" class="w-2 h-2 rounded-full bg-slate-600"></span>
+          <span>Sync</span>
+        </div>
+
+        <button id="adminToggleBtn" onclick="toggleAdminMode()" 
+                class="px-3 py-1.5 rounded-xl border border-slate-700 bg-slate-800 text-slate-300 hover:text-white text-xs font-semibold transition flex items-center gap-2">
+          <span id="adminStatusDot" class="w-2 h-2 rounded-full bg-slate-500"></span>
+          <span id="adminBtnText">Modo Cliente 🔒</span>
+        </button>
+
+        <div class="flex items-center gap-6 bg-slate-900/90 border border-slate-800 px-4 py-2 rounded-xl text-sm">
+          <div class="text-center">
+            <span class="block text-xs text-slate-400 uppercase tracking-wider font-semibold">Variantes</span>
+            <span id="statUnique" class="text-base font-bold text-pink-400">0</span>
+          </div>
+          <div class="w-px h-8 bg-slate-800"></div>
+          <div class="text-center">
+            <span class="block text-xs text-slate-400 uppercase tracking-wider font-semibold">Stock Total</span>
+            <span id="statTotal" class="text-base font-bold text-emerald-400">0</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </header>
+
+  <main class="max-w-7xl mx-auto px-4 lg:px-8 py-8 space-y-6">
+
+    <!-- Buscador y Filtros -->
+    <div class="bg-slate-900 p-4 rounded-2xl border border-slate-800 shadow-xl space-y-4">
+      <div class="flex flex-col sm:flex-row gap-3">
+        <div class="relative flex-1">
+          <input id="searchInput" type="text" 
+                 placeholder="Buscar en el catálogo o añadir cartas por nombre (ej. Charizard, Pikachu)..." 
+                 oninput="onSearchInput()"
+                 class="w-full bg-slate-950 border border-slate-800 text-white rounded-xl px-4 py-3 pl-11 focus:outline-none focus:border-pink-500 focus:ring-1 focus:ring-pink-500 transition text-sm">
+          <svg class="w-5 h-5 text-slate-500 absolute left-3.5 top-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+          </svg>
+          <span id="searchSpinner" class="hidden absolute right-3.5 top-3 text-xs text-pink-400 font-medium">Cargando...</span>
+        </div>
+
+        <select id="filterStock" onchange="applyFilters()" 
+                class="bg-slate-950 border border-slate-800 text-slate-300 rounded-xl px-4 py-3 focus:outline-none focus:border-pink-500 text-sm font-medium">
+          <option value="in_stock">Solo en Stock (> 0)</option>
+          <option value="all">Todas las cartas encontradas</option>
+        </select>
+      </div>
+    </div>
+
+    <!-- Grid de Cartas -->
+    <div id="cardsGrid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 lg:gap-6">
+      <p class="col-span-full text-center text-slate-500 py-16 text-sm">Cargando inventario del catálogo...</p>
+    </div>
+
+  </main>
+
+  <!-- Firebase (Firestore + Authentication) -->
+  <script src="https://www.gstatic.com/firebasejs/10.13.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.13.2/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.13.2/firebase-firestore-compat.js"></script>
+
+  <script src="./app.js"></script>
+</body>
+</html>

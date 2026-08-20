@@ -1,0 +1,9 @@
+name = "yokai-tcg-proxy"
+main = "src/index.js"
+compatibility_date = "2025-01-01"
+
+# El único secret que necesita este Worker. Se configura una sola vez con:
+#
+#   wrangler secret put POKEMON_API_KEY
+#
+# Ver worker/README.md para instrucciones paso a paso.
